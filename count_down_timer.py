@@ -1,5 +1,7 @@
 from collections import namedtuple
-
+import math 
+import time
+import os
 import rx
 from rx.core import Observable
 from rx.subject import BehaviorSubject
@@ -29,6 +31,8 @@ class CountDownTimer:
             map(lambda _, this=self: Time(this._remaining_minutes, this._remaining_seconds))
         )
 
+
+
     def _tick(self) -> None:
         is_time_depleted = self.depleted.value
         if not is_time_depleted:
@@ -36,10 +40,17 @@ class CountDownTimer:
                 self.depleted.on_next(True)
                 return
 
-            if self._remaining_seconds == 0:  # A minute is complete
-                self._remaining_minutes -= 1
-                self._remaining_seconds = 60  # Reset the remaining seconds 
+            
+            if self._remaining_seconds % 3 == 0: 
+                #Joe code
+                self.set_clock_from_inbox_age()
             self._remaining_seconds -= self._tick_size
+
+    def set_clock_from_inbox_age(self):
+                age_of_inbox_in_seconds=int(time.time()-os.path.getmtime("../inbox.md"))
+                seconds_for_the_clock=600-age_of_inbox_in_seconds 
+                self._remaining_minutes = math.floor(seconds_for_the_clock/60)
+                self._remaining_seconds = seconds_for_the_clock-60*self._remaining_minutes
 
     def pause(self) -> None:
         self._tick_size = 0

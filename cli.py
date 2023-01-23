@@ -17,7 +17,7 @@ class TimerWindow:
         self.parent_window_height, self.parent_window_width = parent_window.getmaxyx()
         self.window_width = 40
         self.window_height = 10
-        self.window_begin_y = 5
+        self.window_begin_y = 2
         self.window_begin_x = (self.parent_window_width - self.window_width) // 2 + 2
         self.window = curses.newwin(self.window_height, self.window_width, self.window_begin_y, self.window_begin_x)
 
@@ -41,7 +41,6 @@ class ControlsHelpWindow:
         self.controls_help = {
             "[q]": "Quit",
             "[space]": "Pause | Resume",
-            "[r]": "Restart",
             "[s]": "Start"
         }
         self.render_controls_help()
@@ -89,15 +88,16 @@ class CLICountDownTimer:
         curses.init_pair(1, curses.COLOR_WHITE, curses.COLOR_BLUE)
 
         self.main_window = main_window
-        self.main_window_width, self.main_window_height = (curses.COLS, curses.LINES)
+        self.main_window_width, self.main_window_height = (curses.COLS, 20)
 
         self.timer_window = TimerWindow(self.main_window)
 
-        self.title = "Count Down Timer By Kirabo Ibrahim"
+        self.title = "Log file countdown."
         self.render_title()
 
         self.timer_window.render_remaining_time(self.timer_duration)
         self.controls_help_window = ControlsHelpWindow(self.main_window)
+        self.start()
         self.run_event_loop()
 
     def render_title(self) -> None:
