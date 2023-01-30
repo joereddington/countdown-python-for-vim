@@ -1,5 +1,6 @@
 from collections import namedtuple
 import math 
+import pygame
 import time
 import os
 import rx
@@ -39,11 +40,19 @@ class CountDownTimer:
             if self._remaining_minutes == 0 and self._remaining_seconds == 0:
                 self.depleted.on_next(True)
                 return
+            if self._remaining_minutes == 0 and self._remaining_seconds == 10:
+                pygame.mixer.music.load('sounds/drown.wav')
+                pygame.mixer.music.play(1)
+            if  self._remaining_seconds == 0:
+                self._remaining_minutes -= 1
+                self._remaining_seconds = 59
+                return
 
             
             if self._remaining_seconds % 3 == 0: 
                 #Joe code
                 self.set_clock_from_inbox_age()
+                pass
             self._remaining_seconds -= self._tick_size
 
     def set_clock_from_inbox_age(self):
