@@ -37,9 +37,6 @@ class CountDownTimer:
     def _tick(self) -> None:
         is_time_depleted = self.depleted.value
         if not is_time_depleted:
-            if self._remaining_minutes == 0 and self._remaining_seconds == 0:
-                self.depleted.on_next(True)
-                return
             if self._remaining_minutes == 0 and self._remaining_seconds == 10:
                 pygame.mixer.music.load('sounds/drown.wav')
                 pygame.mixer.music.play(1)
@@ -48,18 +45,29 @@ class CountDownTimer:
                 self._remaining_seconds = 59
                 return
 
+
             
-            if self._remaining_seconds % 3 == 0: 
+            if self._remaining_seconds % 3 == 1: 
                 #Joe code
                 self.set_clock_from_inbox_age()
-                pass
+            if self._remaining_minutes == 0 and self._remaining_seconds == 0:
+# What happens if I JUST  comment this out...   self.depleted.on_next(True)
+                return
+            if  self._remaining_seconds == 0:
+                self._remaining_seconds=60
+                self._remaining_minutes-=1
             self._remaining_seconds -= self._tick_size
 
     def set_clock_from_inbox_age(self):
+            try: 
                 age_of_inbox_in_seconds=int(time.time()-os.path.getmtime("../inbox.md"))
                 seconds_for_the_clock=600-age_of_inbox_in_seconds 
-                self._remaining_minutes = math.floor(seconds_for_the_clock/60)
-                self._remaining_seconds = seconds_for_the_clock-60*self._remaining_minutes
+                if seconds_for_the_clock>0:
+                    self._remaining_minutes = math.floor(seconds_for_the_clock/60)
+                    self._remaining_seconds = seconds_for_the_clock-60*self._remaining_minutes
+            except FileNotFoundError:
+                print("File Not found error")                
+
 
     def pause(self) -> None:
         self._tick_size = 0

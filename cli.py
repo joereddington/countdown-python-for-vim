@@ -12,6 +12,8 @@ from utils import format_time
 pygame.mixer.init()
 
 
+# Try putting in a logger like https://stackoverflow.com/a/24036294/170243
+
 class TimerWindow:
     def __init__(self, parent_window) -> None:
         self.parent_window_height, self.parent_window_width = parent_window.getmaxyx()
@@ -46,14 +48,8 @@ class ControlsHelpWindow:
         self.render_controls_help()
 
     def render_timer_state(self, timer_state: int) -> None:
-        status_text = " [*] Running "
-        if timer_state == 1:
-            status_text = " [-] Paused "
-        elif timer_state == 2:
-            status_text = " [-] Depleted "
         self.window.clear()
         self.render_controls_help()
-        self.window.addstr(0, self.window_width - len(status_text), status_text, curses.A_REVERSE)
         self.window.refresh()
 
     def render_controls_help(self) -> None:
@@ -92,17 +88,12 @@ class CLICountDownTimer:
 
         self.timer_window = TimerWindow(self.main_window)
 
-        self.title = "Log file countdown."
-        self.render_title()
 
         self.timer_window.render_remaining_time(self.timer_duration)
         self.controls_help_window = ControlsHelpWindow(self.main_window)
         self.start()
         self.run_event_loop()
 
-    def render_title(self) -> None:
-        self.main_window.addstr(0, (self.main_window_width - len(self.title)) // 2, self.title, curses.color_pair(1))
-        self.main_window.refresh()
 
     def start(self) -> None:
         self.time_remaining_subscription = self.count_down_timer.time_remaining.subscribe(
@@ -171,9 +162,5 @@ class CLICountDownTimer:
             self.timer_paused_subscription.dispose()
 
 
-arg_parser = argparse.ArgumentParser(description="Count Down Timer")
-arg_parser.add_argument("-m", "--minutes", type=int, help="Number of minutes the timer should run", required=True)
-arg_parser.add_argument("-s", "--seconds", type=int, default=0, help="Number of seconds the timer should run")
-args = arg_parser.parse_args()
-cli_count_down_timer = CLICountDownTimer(args.minutes, args.seconds)
+cli_count_down_timer = CLICountDownTimer(1, 0)
 curses.wrapper(cli_count_down_timer.init)
