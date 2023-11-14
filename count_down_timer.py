@@ -60,7 +60,7 @@ class CountDownTimer:
 
     def set_clock_from_inbox_age(self):
             try: 
-                age_of_inbox_in_seconds=int(time.time()-os.path.getmtime("../inbox.md"))
+                age_of_inbox_in_seconds=int(time.time()-os.path.getmtime("../diary/inbox.md"))
                 seconds_for_the_clock=600-age_of_inbox_in_seconds 
                 if seconds_for_the_clock>0:
                     self._remaining_minutes = math.floor(seconds_for_the_clock/60)
